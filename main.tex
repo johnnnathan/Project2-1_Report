@@ -1,4 +1,3 @@
-
 \documentclass[a4paper,12pt]{article}
 
 % Packages
@@ -23,32 +22,59 @@
 % Abstract
 \section*{Abstract}
 \addcontentsline{toc}{section}{Abstract}
-This report covers how we can alter the agents inside the Unity ML-Agents package, to add more human senses. Additionally, we will analyze how we can change the model's hyper-parameters and which configuration of hyper-parameters has the best performance. The objective is to find methods to improve agents' performance in dynamic environments.
+This report explores the impact of hyper-parameter tuning and sensory enhancement on the performance of the agents within the SoccerTwos environment of the ml-agents Unity package. We consider different configurations of hyper-parameters using policy loss, ELO and other metrics to identify optimal configurations, through hypothesis testing.
 
 
 % Introduction
 \section{Introduction}
-There are digital problems that we cannot solve using simple programming techniques. Creating agents that are able to complete a task in a dynamic environment is one of those problems. This can be solved through using Machine Learning algorithms. Machine learning is a branch of artificial intelligence that focuses on developing algorithms and models that enable systems to learn patterns and make predictions or decisions based on data, as it allows models to adapt and improve through experience in unpredictable environments. Improving the agents' performance has many utilities in real-life, such as in the field of robotics. The objective of this report is to explore ways to improve agent performance through hyper-parameter tuning and the addition of sensory models \cite{benoit2002fuzzy} that emulate human senses within the Unity ML-Agents package \cite{unityTechnologies2019mlagents} \cite{ilosvay2024unity} \cite{juliani2018unity}.
+There exist certain problems in computing that we cannot solve using simple programming techniques. Creating agents that are able to complete a task in a dynamic environment is one such problem. This can be addressed with machine learning algorithms. Machine learning is a branch of artificial intelligence that focuses on developing algorithms and models that enable systems to learn patterns and make predictions or decisions based on data. It allows models to adapt and improve through experience in unpredictable environments. Improving agents' performance has many utilities in real-life, such as in the field of robotics. 
+
+The objective of this report is to explore ways to improve agent performance through hyper-parameter tuning and the addition of sensory models \cite{benoit2002fuzzy} that emulate human senses within SoccerTwos environment inside the Unity ML-Agents package \cite{unityTechnologies2019mlagents} \cite{ilosvay2024unity} \cite{juliani2018unity}.  Specifically we will examine how different sensor configurations affect the performance of the models by matching them up against each other. 
 
 % Experiment
 \section{Experiments}
 
 \subsection{Past Work}
-Throughout our work on this project we developed certain scripts that enhanced the sensory capacity of the agents. This included a more realistic vision sensor and a sound sensor. The basic ML-Agents package already contains a vision sensor, its use is unrealistic because the agent shoots vision rays from the back-side of its head and the vision cone is coupled to the rotation of the body, this means that the eyes can only point directly in front of the body, things that are impossible in the real world. With our enhancements the agents are now able to rotate their head and also hear sounds that are generated nearby. 
+During our research, we developed certain scripts that improved the sensory capabilities of the agents, including a more realistic vision sensor and a sound sensor. While the basic ML-Agents package already contains a vision sensor, its implementation is somewhat unrealistic because the agent shoots vision rays from the back of its head and the vision cone is coupled to the rotation of the body. This means that the eyes can only point directly in front of the body, which is not a limitation in the real world. 
 
+To address this, we implemented a vision system that enables agents to rotate their heads independently, allowing for a more flexible field of view. In addition,, the sound sensor works by detecting movement within a set distance from the agent. We set a low threshold that was applied to the velocity of all objects, when the velocity of the object exceeded it, the coordinates would be added to the memory of the agent. With our enhancements,the agents are now able to rotate their head and also hear sounds that are generated nearby. 
+\newpage
 \subsection{Hyper-Parameter Tuning}
-To test the performance, and ability to improve, of the agents we performed two types of tests. The first test would be performed on the basic version of the Agent. We generated a script that would generate random training configurations as a way to perform a random search. Through this method we can reach an approximation of the best configuration of hyper-parameters, giving us a better insight into what hyper-parameters are important for this task. 
+To test the performance, and capacity for improvement, of the agents we performed two types of tests. The first test would be performed on the basic version of the Agent. We decided on five different hyper-parameters from the configuration file that we believed would yield interesting results if altered. For each hyper-parameter we picked four different values, two of them higher and two of them lower than the basic values, and trained a model to 2.5 million steps while only changing one value at a time. When we finished training the models we used a mathematical formula !!!TALK MORE ABOUT THE FORMULA!!! to decide which two of the five values were the best while taking into consideration the ELO, policy loss, cumulative reward and value loss, using the tensorboard module on the tfevent files. Using the two best values of each hyper-parameter we created exhaustive combinations, and trained the models accordingly. With all the results computed we wanted to test how !!! TALK ABOUT THE HYPOTHESIS TEST !!!
 
-To find the best hyper-parameter configuration we had to choose between Grid Search, Random Search and an Evolutionary Algorithm, as our main method. We chose Random Search over the others because of a few important factors. Grid Search requires us decide on predetermined values for variable and it exhaustively iterates over all of the possible combinations. Although it does provide us with a more comprehensive overview of the important of certain variables on the performance, its time complexity is high, which is further worsened by the long training times, and the values that are used are arbitrary and discrete, meaning that there could be other values, that are not included in the list, that could perform better. The evolutionary algorithm is promising, with seemingly better efficiency compared to the other methods, but the integration complexity would result in all of our efforts going into finding a way to make it work the with the Unity Editor, taking away from our other obligations. The Random Search algorithm seemed to be the worst choice, performance wise, but through research was determined to be the best option, since it can outperform Grid Search in performance \cite{JMLR:v13:bergstra12a}.
+To find the best hyper-parameter configuration we had to choose between Grid Search, Random Search and an Evolutionary Algorithm, as our main method. We chose Grid Search because it provides a comprehensive overview of the hyper-parameter space. While it is computationally complex, we are able to draw meaningful results from the output, and it is also able to find the optimal configuration within the selection. This aligns with our goal of evaluating how each parameter affects the others.
+
+While Random Search is generally more time-efficient than Grid Search, its reliance on randomness means that we are not able to derive any meaningful insights about the importance of certain hyper-parameters, without  extensive testing. With the computational constraints of our hardware, Random Search was not a method that we could use. 
+
+Evolutionary Algorithms offer a promising balance between computational efficiency and mathematical rigor. However the complexity and time investment of developing one such algorithm ourselves caused us not to pursue it. Given the scope of this project, the implementation would take away from the goals we set out to accomplish.
 
 
 \subsection{Comparison of Basic and Enhanced Agents}
 In the second experiment we put the basic and enhanced agents in an environment and, using the same hyper-parameter configuration, we tested which one would perform better at the task.
 
+
+\subsection{Values}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{Configurations} & \textbf{Batch\_Size} & \textbf{Learning\_Rate} & \textbf{Hidden\_Units} & \textbf{Beta} & \textbf{Lambda} \\
+\hline
+Value 1 & 512   & 0.00007 & 128   & 0.0012 & 0.9   \\
+Value 2 & 1024  & 0.0001  & 256   & 0.0025 & 0.925 \\
+Baseline & 2048  & 0.0003  & 512   & 0.005  & 0.95  \\
+Value 3 & 3096  & 0.0005  & 768   & 0.01   & 0.975 \\
+Value 4 & 4120  & 0.0012  & 1024  & 0.02   & 1     \\
+\hline
+\end{tabular}
+\caption{Hyper-parameter configurations for agent training.}
+\end{table}
+
 % Results
 \section{Results}
 
 \section{Conclusions}
+\newpage
 % Resources
 \section{Appendix}
 
